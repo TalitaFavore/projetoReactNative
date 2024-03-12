@@ -1,8 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function Login() {
+    const navigation = useNavigation();
+
+    const goToCadastro = () => {
+        navigation.navigate('Cadastro');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.titulo}>Entrar</Text>
@@ -19,15 +25,17 @@ export default function Login() {
                         style={styles.input}
                         secureTextEntry
                     />
+                    <Text style={styles.aviso}>Esqueceu a senha? Clique aqui</Text>
                 </View>
             </SafeAreaView>
             <View style={styles.bottomSection}>
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Iniciar Sessão</Text>
                 </TouchableOpacity>
-                <Text style={styles.aviso}>Esqueceu a senha? Clique aqui</Text>
-                <Text style={styles.aviso}>Ainda não tem conta? Clique aqui</Text>
             </View>
+            <TouchableOpacity onPress={goToCadastro}>
+                <Text style={styles.aviso}>Ainda não tem conta? Clique aqui</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -38,13 +46,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-
-    texto: {
-        color: 'black',
-        fontSize: 50,
-        fontWeight: 'bold',
-        fontFamily: 'Quicksand',
     },
 
     titulo: {
@@ -106,8 +107,8 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
-        alignItems: 'flex-start', 
-        width: '100%', 
+        alignItems: 'flex-start',
+        width: '100%',
         paddingHorizontal: 20,
     },
 

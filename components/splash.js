@@ -1,7 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Splash() {
+  const navigation = useNavigation();
+
+  const goToCadastro = () => {
+    navigation.navigate('Cadastro');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.texto}>MixIng</Text>
@@ -13,7 +20,7 @@ export default function Splash() {
       </View>
       <Text style={styles.bordao}>Descubra, filtre, aproveite</Text>
       <View style={styles.bottomSection}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={goToCadastro}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
       </View>

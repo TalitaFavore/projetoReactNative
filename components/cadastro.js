@@ -1,8 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
+export default function Cadastro() {
+    const navigation = useNavigation();
 
-export default function Login() {
+    const goToLogin = () => {
+        navigation.navigate('Login');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.titulo}>Crie sua conta</Text>
@@ -26,7 +32,9 @@ export default function Login() {
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Cadastrar</Text>
                 </TouchableOpacity>
-                <Text style={styles.aviso}>Já tem conta? Entre aqui</Text>
+                <TouchableOpacity onPress={goToLogin}>
+                    <Text style={styles.aviso}>Já tem conta? Entre aqui</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -38,13 +46,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-
-    texto: {
-        color: 'black',
-        fontSize: 50,
-        fontWeight: 'bold',
-        fontFamily: 'Quicksand',
     },
 
     titulo: {
