@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function Splash() {
   const navigation = useNavigation();
 
-  const goToLogin = () => {
+  const goToCadastro = () => {
     navigation.navigate('Login');
   };
 
@@ -20,7 +20,7 @@ export default function Splash() {
       </View>
       <Text style={styles.bordao}>Descubra, filtre, aproveite</Text>
       <View style={styles.bottomSection}>
-        <TouchableOpacity style={styles.button} onPress={goToLogin}>
+        <TouchableOpacity style={styles.button} onPress={goToCadastro}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
       </View>

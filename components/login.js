@@ -8,7 +8,6 @@ export default function AuthScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleShowPassword = () => {
@@ -23,9 +22,32 @@ export default function AuthScreen() {
     setIsLogin(true);
   };
 
-  const handleSubmit = () => {
-    // Lógica para enviar os dados do formulário
-  };
+  function handleLogin() {
+    if (type === 'login') {
+      // Aqui fazemos o login
+      const user = firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((user) => {
+          changeStatus(user.user.uid)
+        })
+        .catch((err) => {
+          console.log(err);
+          alert('Email ou senha não cadastrados!');
+          return;
+        })
+
+    } else {
+      // Aqui cadastramos o usuario
+      const user = firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((user) => {
+          changeStatus(user.user.uid)
+        })
+        .catch((err) => {
+          console.log(err);
+          alert('Erro ao Cadastrar!');
+          return;
+        })
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -51,32 +73,9 @@ export default function AuthScreen() {
             <Feather name={showPassword ? 'eye-off' : 'eye'} size={24} color="black" />
           </TouchableOpacity>
         </View>
-        {!isLogin && (
-          <>
-            <Text style={styles.subtitulo}>Confirmar Senha</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Confirme sua senha"
-                secureTextEntry={!showPassword}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-              <TouchableOpacity onPress={toggleShowPassword} style={styles.eyeIconContainer}>
-                <Feather name={showPassword ? 'eye-off' : 'eye'} size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.subtitulo}>Li e concordo com os termos de uso e política de privacidade</Text>
-          </>
-        )}
-        {isLogin && (
-          <TouchableOpacity onPress={() => navigation.navigate('EsqueceuSenha')}>
-            <Text style={styles.aviso}>Esqueceu sua senha? Clique aqui</Text>
-          </TouchableOpacity>
-        )}
       </View>
       <View style={styles.bottomSection}>
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>{isLogin ? 'Iniciar Sessão' : 'Cadastrar'}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={isLogin ? goToCadastro : goToLogin}>
