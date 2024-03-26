@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import firebase from './services/connectionFirebase';
 
-export default function AuthScreen() {
-  const navigation = useNavigation();
+export default function Login({changeStatus}) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
+  const [type, setType] = useState('login');
+  const [isLogin, setIsLogin] = useState(false);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -23,20 +23,8 @@ export default function AuthScreen() {
   };
 
   function handleLogin() {
-    if (type === 'login') {
-      // Aqui fazemos o login
-      const user = firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((user) => {
-          changeStatus(user.user.uid)
-        })
-        .catch((err) => {
-          console.log(err);
-          alert('Email ou senha não cadastrados!');
-          return;
-        })
-
-    } else {
-      // Aqui cadastramos o usuario
+    if (type != 'login') {
+      // Aqui cadastramos o usuario 
       const user = firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((user) => {
           changeStatus(user.user.uid)
@@ -46,6 +34,21 @@ export default function AuthScreen() {
           alert('Erro ao Cadastrar!');
           return;
         })
+ 
+    } else {
+      // Aqui fazemos o login
+     
+      const user = firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((user) => {
+          changeStatus(user.user.uid)
+        })
+        .catch((err) => {
+          console.log(err);
+          alert('Email ou senha não cadastrados!');
+          return;
+        })
+      
+      
     }
   }
 
@@ -58,7 +61,7 @@ export default function AuthScreen() {
           style={styles.input}
           placeholder="Digite aqui seu e-mail"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => setEmail(text)}
         />
         <Text style={styles.subtitulo}>Senha</Text>
         <View style={styles.passwordContainer}>
@@ -67,7 +70,7 @@ export default function AuthScreen() {
             placeholder="Informe sua senha"
             secureTextEntry={!showPassword}
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) =>setPassword(text)}
           />
           <TouchableOpacity onPress={toggleShowPassword} style={styles.eyeIconContainer}>
             <Feather name={showPassword ? 'eye-off' : 'eye'} size={24} color="black" />
@@ -107,6 +110,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Quicksand',
     marginTop: 10,
     textAlign: 'left',
+    alignSelf: 'flex-start',
   },
   aviso: {
     color: '#6EC071',
@@ -145,9 +149,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#6EC071',
     placeholderTextColor: '#A9A9A9',
+    alignItems: 'center',
   },
   inputContainer: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     width: '100%',
     paddingHorizontal: 20,
   },
