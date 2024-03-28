@@ -1,76 +1,83 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import firebase from './services/connectionFirebase';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Login({changeStatus}) {
+
+export default function Login({ route }) {
+  const {changeStatus, setUser} = route.params;
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [type, setType] = useState('login');
-  const [isLogin, setIsLogin] = useState(false);
+  const [isCadastro, setIsCadastro] = useState(true);
+  const navigation = useNavigation();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const goToCadastro = () => {
-    setIsLogin(false);
+    setIsCadastro(true);
   };
 
   const goToLogin = () => {
-    setIsLogin(true);
+    setIsCadastro(false);
   };
 
   function handleLogin() {
-    if (type != 'login') {
-      // Aqui cadastramos o usuario 
-      const user = firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((user) => {
-          changeStatus(user.user.uid)
+    if (isCadastro) {
+      // Cadastrar usuário
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          handleStatusChange(user.uid);
         })
-        .catch((err) => {
-          console.log(err);
-          alert('Erro ao Cadastrar!');
-          return;
-        })
- 
+        .catch((error) => {
+          console.log(error);
+          alert('Erro ao cadastrar usuário!');
+        });
     } else {
-      // Aqui fazemos o login
-     
-      const user = firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((user) => {
-          changeStatus(user.user.uid)
+      // Login do usuário
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          handleStatusChange(user.uid);
         })
-        .catch((err) => {
-          console.log(err);
-          alert('Email ou senha não cadastrados!');
-          return;
-        })
-      
-      
+        .catch((error) => {
+          console.log(error);
+          alert('Email ou senha incorretos!');
+        });
     }
   }
 
+  function handleStatusChange(userId) {
+    // Armazenar o ID do usuário em um estado local
+    console.log(userId);
+    changeStatus(userId);
+    console.log('Teste2');
+    navigation.navigate('Home');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>{isLogin ? 'Entrar' : 'Crie sua conta'}</Text>
+      <Text style={styles.titulo}>{isCadastro ? 'Crie sua conta' : 'Entre com sua conta'}</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.subtitulo}>E-mail</Text>
         <TextInput
           style={styles.input}
-          placeholder="Digite aqui seu e-mail"
+          placeholder="Digite seu e-mail"
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={setEmail}
         />
         <Text style={styles.subtitulo}>Senha</Text>
         <View style={styles.passwordContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Informe sua senha"
+            placeholder="Digite sua senha"
             secureTextEntry={!showPassword}
             value={password}
-            onChangeText={(text) =>setPassword(text)}
+            onChangeText={setPassword}
           />
           <TouchableOpacity onPress={toggleShowPassword} style={styles.eyeIconContainer}>
             <Feather name={showPassword ? 'eye-off' : 'eye'} size={24} color="black" />
@@ -79,11 +86,11 @@ export default function Login({changeStatus}) {
       </View>
       <View style={styles.bottomSection}>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>{isLogin ? 'Iniciar Sessão' : 'Cadastrar'}</Text>
+          <Text style={styles.buttonText}>{isCadastro ? 'Cadastrar' : 'Entrar'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={isLogin ? goToCadastro : goToLogin}>
+        <TouchableOpacity onPress={isCadastro ? goToLogin : goToCadastro}>
           <Text style={styles.aviso}>
-            {isLogin ? 'Ainda não tem conta? Clique aqui' : 'Já tem conta? Entre aqui'}
+            {isCadastro ? 'Já tem uma conta? Faça login' : 'Ainda não tem uma conta? Cadastre-se'}
           </Text>
         </TouchableOpacity>
       </View>

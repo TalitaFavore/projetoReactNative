@@ -8,9 +8,8 @@ import { useState } from 'react';
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('');
 
-  if (!user) {
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
@@ -18,15 +17,11 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{
-              changeStatus: (user) => setUser(user)
+            initialParams={{
+              changeStatus: setUser
             }}
           />
         </Stack.Navigator>
       </NavigationContainer>
     );
-  } else {
-    // Aqui você pode retornar o conteúdo da aplicação após o login
-    return <MenuTabs />;
-  }
 }
